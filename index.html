@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aflows - Automatisierte Dokumentenorganisation per WhatsApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #3182ce;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(49, 130, 206, 0.4);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 8rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23e2e8f0" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: #1a202c;
+        }
+        
+        .hero-text .highlight {
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-text p {
+            font-size: 1.25rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(49, 130, 206, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #3182ce;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid #3182ce;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #3182ce;
+            color: white;
+        }
+        
+        .trust-indicators {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            opacity: 0.7;
+        }
+        
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background: #1a202c;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #25d366;
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .chat-bubble {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            animation: slideIn 2s ease-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 6rem 0;
+            background: white;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+        
+        .section-header p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .service-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+        
+        .service-card p {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        
+        /* Benefits Section */
+        .benefits {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+        
+        .benefits-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .benefits-list {
+            list-style: none;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .benefit-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .benefit-text h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1a202c;
+        }
+        
+        .benefit-text p {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+        
+        .benefits-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .process-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .flow-step {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideInRight 1s ease-out;
+        }
+        
+        .flow-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Contact Section */
+        .contact {
+            padding: 6rem 0;
+            background: white;
+        }
+        
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        
+        .contact-form {
+            background: #f7fafc;
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #1a202c;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3182ce 0%, #38a169 100%);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(49, 130, 206, 0.4);
+        }
+        
+        .contact-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+        
+        .contact-info p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+        }
+        
+        .security-badges {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .security-badge {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a202c;
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .footer-section a {
+            color: #a0aec0;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: #3182ce;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #2d3748;
+            padding-top: 2rem;
+            text-align: center;
+            color: #a0aec0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-content,
+            .benefits-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .phone-mockup {
+                width: 250px;
+                height: 500px;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <div class="logo">Aflows</div>
+            <ul class="nav-links">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#benefits">Vorteile</a></li>
+                <li><a href="#contact">Kontakt</a></li>
+            </ul>
+            <a href="#contact" class="cta-button">Demo anfordern</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Dokumentenorganisation <span class="highlight">automatisiert</span> per WhatsApp</h1>
+                    <p>Sparen Sie Zeit und Nerven: Senden Sie Belege einfach per WhatsApp und lassen Sie Aflows alles strukturiert ablegen – bereit für Ihren Steuerberater.</p>
+                    
+                    <div class="hero-buttons">
+                        <a href="#contact" class="btn-primary">Kostenlose Demo</a>
+                        <a href="#services" class="btn-secondary">Mehr erfahren</a>
+                    </div>
+                    
+                    <div class="trust-indicators">
+                        <div class="trust-item">
+                            <span>🔒</span>
+                            <span>DSGVO-konform</span>
+                        </div>
+                        <div class="trust-item">
+                            <span>⚡</span>
+                            <span>Keine App nötig</span>
+                        </div>
+                        <div class="trust-item">
+                            <span>🚀</span>
+                            <span>Sofort einsatzbereit</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div style="text-align: center; margin-bottom: 20px; font-weight: bold;">WhatsApp Chat</div>
+                            <div class="chat-bubble">📄 Rechnung gesendet</div>
+                            <div class="chat-bubble">✅ Dokument kategorisiert: Büromaterial, Q4 2024</div>
+                            <div class="chat-bubble">📁 In Ordnerstruktur abgelegt</div>
+                            <div class="chat-bubble">🎯 Bereit für Export!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Unsere Services für Ihr Unternehmen</h2>
+                <p>Von der einfachen Dokumentenablage bis hin zur vollständigen Prozessautomatisierung – wir digitalisieren Ihre Arbeitsabläufe.</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💬</div>
+                    <h3>WhatsApp & Telegram Chatbots</h3>
+                    <p>Intelligente Chatbots für Kundenservice, Terminbuchungen und automatisierte Anfragen. Keine App-Installation nötig.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">📁</div>
+                    <h3>Automatisches Dokumentenmanagement</h3>
+                    <p>Belege, Rechnungen und Verträge werden automatisch kategorisiert und strukturiert abgelegt. Perfekt für die Steuerberatung.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🔄</div>
+                    <h3>PDF-Optimierung & Konvertierung</h3>
+                    <p>Fotos werden automatisch zu optimierten PDFs umgewandelt und mit intelligenten Metadaten versehen.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🔌</div>
+                    <h3>ERP & DATEV Integration</h3>
+                    <p>Nahtlose Anbindung an bestehende Systeme. Export-Funktionen für Steuerberater und Buchhaltungssoftware.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Maßgeschneiderte Automatisierung</h3>
+                    <p>Individuelle Workflows für Ihre Branche. Von Handwerksbetrieben bis zu Agenturen – wir passen uns an Ihre Bedürfnisse an.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Analytics & Reporting</h3>
+                    <p>Übersichtliche Berichte über Ihre Dokumente und Prozesse. Behalten Sie den Überblick über Ihre Unterlagen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="benefits">
+        <div class="container">
+            <div class="benefits-content">
+                <div>
+                    <h2>Warum Aflows die richtige Wahl ist</h2>
+                    <p style="margin-bottom: 2rem; color: #4a5568;">Speziell entwickelt für KMUs und Selbstständige, die ihre Dokumentenverwaltung revolutionieren möchten.</p>
+                    
+                    <ul class="benefits-list">
+                        <li class="benefit-item">
+                            <div class="benefit-icon">⏱️</div>
+                            <div class="benefit-text">
+                                <h4>Massive Zeitersparnis</h4>
+                                <p>Bis zu 80% weniger Zeit für Dokumentenorganisation – mehr Zeit für Ihr Kerngeschäft.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="benefit-item">
+                            <div class="benefit-icon">🔒</div>
+                            <div class="benefit-text">
+                                <h4>Maximale Datensicherheit</h4>
+                                <p>DSGVO-konforme Speicherung in Deutschland. Ihre Daten bleiben sicher und privat.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="benefit-item">
+                            <div class="benefit-icon">📱</div>
+                            <div class="benefit-text">
+                                <h4>Kinderleichte Bedienung</h4>
+                                <p>Funktioniert über WhatsApp – jeder Mitarbeiter kann es sofort nutzen, ohne Schulung.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="benefit-item">
+                            <div class="benefit-icon">🎯</div>
+                            <div class="benefit-text">
+                                <h4>Steuerberater-ready</h4>
+                                <p>Alle Dokumente strukturiert und exportbereit für Ihre Steuerberatung oder Buchhaltung.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="benefits-visual">
+                    <div class="process-flow">
+                        <div class="flow-step">
+                            <div class="flow-number">1</div>
+                            <div>
+                                <h4>Dokument senden</h4>
+                                <p>Einfach per WhatsApp an Ihren Bot</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step">
+                            <div class="flow-number">2</div>
+                            <div>
+                                <h4>Automatische Kategorisierung</h4>
+                                <p>KI erkennt Dokumententyp und Zeitraum</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step">
+                            <div class="flow-number">3</div>
+                            <div>
+                                <h4>Strukturierte Ablage</h4>
+                                <p>In Ihrer personalisierten Ordnerstruktur</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step">
+                            <div class="flow-number">4</div>
+                            <div>
+                                <h4>Export & Integration</h4>
+                                <p>Bereit für Steuerberater oder ERP-System</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Bereit für die Zukunft Ihrer Dokumentenverwaltung?</h2>
+                <p>Lassen Sie uns gemeinsam Ihre Prozesse automatisieren. Kostenlose Demo verfügbar.</p>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Sprechen wir über Ihre Anforderungen</h3>
+                    <p>Jedes Unternehmen ist einzigartig. In einem kostenlosen Beratungsgespräch zeigen wir Ihnen, wie Aflows speziell für Ihre Bedürfnisse funktioniert.</p>
+                    
+                    <div style="margin: 2rem 0;">
+                        <h4 style="margin-bottom: 1rem;">Was Sie erwarten können:</h4>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li style="margin-bottom: 0.5rem;">✅ Individuelle Demo Ihres zukünftigen Systems</li>
+                            <li style="margin-bottom: 0.5rem;">✅ Kostenlose Beratung zu Ihren Prozessen</li>
+                            <li style="margin-bottom: 0.5rem;">✅ Transparente Preisgestaltung</li>
+                            <li style="margin-bottom: 0.5rem;">✅ Keine Verpflichtungen</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 15px; margin: 2rem 0;">
+                        <h4 style="margin-bottom: 1rem; color: #1a202c;">Direkter Kontakt</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; color: #4a5568;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span>👤</span>
+                                <span>Framarz Alizadeh</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span>📍</span>
+                                <span>Cottaweg 27a, 22117 Hamburg</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span>📱</span>
+                                <a href="tel:+491633931258" style="color: #3182ce; text-decoration: none;">+49 163 393 1258</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="security-badges">
+                        <div class="security-badge">
+                            <span>🛡️</span>
+                            <span>DSGVO</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>🇩🇪</span>
+                            <span>Made in Germany</span>
+                        </div
